@@ -1,5 +1,5 @@
 var mysql = require("mysql");
-// var inquirer = require("inquirer");
+var inquirer = require("inquirer");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -21,12 +21,40 @@ connection.connect(function (err) {
     readProducts();
 });
 
+
 function readProducts() {
     console.log("Displaying all available products...\n");
+
     connection.query("SELECT `item_id`, `product_name`, `price` FROM `bamazon`.`products`", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
         console.table(res);
-        connection.end();
+        start();
+        // connection.end();
     });
+}
+
+function start() {
+    inquirer
+        .prompt([{
+                name: "productID",
+                type: "number",
+                message: "What is the product_id you would like to buy?"
+            },
+            {
+                name: "units",
+                type: "number",
+                message: "How many units of the product do you want to buy?"
+            }
+        ])
+        .then(function (answer) {
+            // based on their answer, either call the bid or the post functions
+            // if (answer.postOrBid === "POST") {
+            //  postAuction();
+            // } else if (answer.postOrBid === "BID") {
+            //   bidAuction();
+            //} else {
+            connection.end();
+            // }
+        });
 }
