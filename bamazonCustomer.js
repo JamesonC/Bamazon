@@ -38,13 +38,27 @@ function start() {
     inquirer
         .prompt([{
                 name: "productID",
-                type: "number",
-                message: "What is the product_id you would like to buy?"
+                type: "input",
+                message: "What is the product_id you would like to buy?",
+                validate: function(value) {
+                    if (isNaN(value) == false) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             },
             {
                 name: "units",
-                type: "number",
-                message: "How many units of the product do you want to buy?"
+                type: "input",
+                message: "How many units of the product do you want to buy?",
+                validate: function(value) {
+                    if (isNaN(value) == false) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             }
         ])
         .then(function (answer) {
