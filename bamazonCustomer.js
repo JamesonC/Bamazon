@@ -23,10 +23,10 @@ connection.connect(function (err) {
 
 function readProducts() {
     console.log("Displaying all available products...\n");
-    connection.query("SELECT * FROM products", function (err, res) {
+    connection.query("SELECT `item_id`, `product_name`, `price` FROM `bamazon`.`products`", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
-        console.log(res);
+        console.table(res);
         connection.end();
     });
 }
