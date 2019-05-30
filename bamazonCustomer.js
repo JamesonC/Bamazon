@@ -40,7 +40,7 @@ function start() {
                 name: "productID",
                 type: "input",
                 message: "What is the product_id you would like to buy?",
-                validate: function(value) {
+                validate: function (value) {
                     if (isNaN(value) == false) {
                         return true;
                     } else {
@@ -52,7 +52,7 @@ function start() {
                 name: "units",
                 type: "input",
                 message: "How many units of the product do you want to buy?",
-                validate: function(value) {
+                validate: function (value) {
                     if (isNaN(value) == false) {
                         return true;
                     } else {
@@ -62,13 +62,37 @@ function start() {
             }
         ])
         .then(function (answer) {
-            // based on their answer, either call the bid or the post functions
-            // if (answer.postOrBid === "POST") {
-            //  postAuction();
-            // } else if (answer.postOrBid === "BID") {
-            //   bidAuction();
-            //} else {
-            connection.end();
-            // }
+            var query = "SELECT stock_quantity, price FROM products WHERE ?";
+            connection.query(query, {
+                id: answer.productID
+            }, function (err, res) {
+                var total = res[0].price * parseInt(answer.units);
+                var unitIn = res[0].stock_quantity;
+                var unitBuy = parseInt(answer.units);
+                if (unitIn >= unitBuy) {
+                    console.log("Thanks for shopping with us!");
+                    console.log("Your order total is: " + total)
+                    var newStock = unitIn - unitBuy;
+
+                    connection.query(
+                        "UPDATE product_name SET ? WHERE ?",
+                        [{
+                                stock_quantity: newStock
+                            },
+                            {
+                                id: answer.productID
+                            }
+                        ],
+                        function (error) {
+                            if (error) throw err;
+                            console.log("Your order has been placed successfully!");
+                            connection.end();
+                        }
+                    );
+                } else {
+                    console.log("We currently do not have that many unit in stock!");
+                    start();
+                }
+            });
         });
 }
