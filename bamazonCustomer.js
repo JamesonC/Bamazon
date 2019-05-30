@@ -25,7 +25,7 @@ connection.connect(function (err) {
 function readProducts() {
     console.log("Displaying all available products...\n");
 
-    connection.query("SELECT `item_id`, `product_name`, `price` FROM `bamazon`.`products`", function (err, res) {
+    connection.query("SELECT item_id, product_name, price FROM products", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
         console.table(res);
@@ -61,26 +61,30 @@ function start() {
                 }
             }
         ])
-        .then(function (answer) {
+        .then(function (answer, res) {
             var query = "SELECT stock_quantity, price FROM products WHERE ?";
             connection.query(query, {
-                id: answer.productID
+                item_id: answer.productID
             }, function (err, res) {
+                console.log(res);
                 var total = res[0].price * parseInt(answer.units);
                 var unitIn = res[0].stock_quantity;
                 var unitBuy = parseInt(answer.units);
+
+                // console.log(res);                
+
                 if (unitIn >= unitBuy) {
                     console.log("Thanks for shopping with us!");
                     console.log("Your order total is: " + total)
                     var newStock = unitIn - unitBuy;
 
                     connection.query(
-                        "UPDATE product_name SET ? WHERE ?",
+                        "UPDATE products SET ? WHERE ?",
                         [{
                                 stock_quantity: newStock
                             },
                             {
-                                id: answer.productID
+                                item_id: answer.itemId
                             }
                         ],
                         function (error) {
@@ -95,4 +99,4 @@ function start() {
                 }
             });
         });
-}
+};
