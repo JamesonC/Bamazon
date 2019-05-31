@@ -66,7 +66,7 @@ function start() {
             connection.query(query, {
                 item_id: answer.productID
             }, function (err, res) {
-                console.log(res);
+
                 var total = res[0].price * parseInt(answer.units);
                 var unitIn = res[0].stock_quantity;
                 var unitBuy = parseInt(answer.units);
@@ -75,7 +75,7 @@ function start() {
 
                 if (unitIn >= unitBuy) {
                     console.log("Thanks for shopping with us!");
-                    console.log("Your order total is: " + total)
+                    console.log("Your order total is: " + "$" + total)
                     var newStock = unitIn - unitBuy;
 
                     connection.query(
